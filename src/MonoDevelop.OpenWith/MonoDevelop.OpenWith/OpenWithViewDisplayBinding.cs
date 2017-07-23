@@ -61,5 +61,13 @@ namespace MonoDevelop.OpenWith
 				mimeType,
 				ownerProject) as IViewDisplayBinding;
 		}
+
+		public override string ToString ()
+		{
+			return string.Format (
+				"Name={0}, CanUseAsDefault={1}]",
+				Name,
+				CanUseAsDefault);
+		}
 	}
 }

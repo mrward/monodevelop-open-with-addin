@@ -1,5 +1,5 @@
 ﻿//
-// CustomMacExternalDisplayBinding.cs
+// OpenWithDesktopApplicationDisplayBinding.cs
 //
 // Author:
 //       Matt Ward <matt.ward@xamarin.com>
@@ -32,13 +32,13 @@ using MonoDevelop.Projects;
 
 namespace MonoDevelop.OpenWith
 {
-	class DesktopApplicationDisplayBinding : IExternalDisplayBinding
+	class OpenWithDesktopApplicationDisplayBinding : IExternalDisplayBinding
 	{
 		DefaultDesktopApplication application;
 		string fileExtension;
 		string mimeType;
 
-		public DesktopApplicationDisplayBinding (
+		public OpenWithDesktopApplicationDisplayBinding (
 			FilePath fileName,
 			string mimeType,
 			DesktopApplication application)
@@ -63,6 +63,14 @@ namespace MonoDevelop.OpenWith
 		public DesktopApplication GetApplication (FilePath fileName, string mimeType, Project ownerProject)
 		{
 			return application;
+		}
+
+		public override string ToString ()
+		{
+			return string.Format (
+				"Application.Id={0}, CanUseAsDefault={1}]",
+				application.Id,
+				CanUseAsDefault);
 		}
 	}
 }

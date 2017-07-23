@@ -24,19 +24,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using MonoDevelop.Ide.Gui;
-using MonoDevelop.Core;
-using MonoDevelop.Projects;
-using MonoDevelop.Ide;
-using MonoDevelop.Ide.Desktop;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using MonoDevelop.Core;
+using MonoDevelop.Ide.Gui;
+using MonoDevelop.Projects;
 
 namespace MonoDevelop.OpenWith
 {
 	class DisplayBindingMappings
 	{
-		Dictionary<string, string> mappings = new Dictionary<string, string> (StringComparer.OrdinalIgnoreCase);
+		Dictionary<string, string> mappings =
+			new Dictionary<string, string> (StringComparer.OrdinalIgnoreCase);
+
+		Dictionary<string, IDisplayBinding> defaultDisplayBindings =
+			new Dictionary<string, IDisplayBinding> (StringComparer.OrdinalIgnoreCase);
 
 		public IDisplayBinding GetDisplayBinding (FilePath fileName, string mimeType, Project ownerProject)
 		{
@@ -50,50 +52,35 @@ namespace MonoDevelop.OpenWith
 					return displayBinding;
 			}
 
-			//if (fileName.HasExtension (".axml")) {
-			//	var app = new MacDesktopApplication ("/Applications/TextEdit.app", "TextEdit.app", true);
-			//	//foreach (var app in DesktopService.GetApplications (fileName)) {
-			//	//	if (app.Id.Contains ("TextEdit.app"))
-			//			return new DesktopApplicationDisplayBinding (app);
-			//		//System.Console.WriteLine ("{0} {1}", app.Id, app.DisplayName);
-			//	//}
-			//}
-
-			//foreach (var app in DesktopService.GetApplications (fileName)) {
-			//	System.Console.WriteLine ("{0} {1}", app.Id, app.DisplayName);
-			//}
-			//return null;
-			//foreach (var displayBinding in DisplayBindingService.GetBindings<IDisplayBinding> ()) {
-			//	var external = displayBinding as IExternalDisplayBinding;
-			//	if (external != null && !(external is CustomizeOpenWithExternalDisplayBinding)) {
-			//		var app = external.GetApplication (fileName, mimeType, ownerProject);
-			//		System.Console.WriteLine ("{0} {1}", app.Id, app.DisplayName);
-			//	}
-			//}
 			return null;
 		}
 
 		public void SetAsDefault (FilePath fileName, string mimeType, OpenWithFileViewer fileViewer)
 		{
-			if (fileViewer == null) {
-				ClearDefault (fileName, mimeType);
+			ClearDefault (fileName, mimeType);
+
+			if (fileViewer == null)
 				return;
-			}
 
 			string key = GetKey (fileName, mimeType);
 
 			mappings [key] = fileViewer.GetMappingKey ();
 
 			var displayBinding = DisplayBindingFactory.CreateDisplayBinding (fileName, mimeType, fileViewer);
+			defaultDisplayBindings [key] = displayBinding;
 			DisplayBindingService.RegisterRuntimeDisplayBinding (displayBinding);
 		}
-
-
 
 		public void ClearDefault (FilePath fileName, string mimeType)
 		{
 			string key = GetKey (fileName, mimeType);
 			mappings.Remove (key);
+
+			IDisplayBinding displayBinding = null;
+			if (defaultDisplayBindings.TryGetValue (key, out displayBinding)) {
+				DisplayBindingService.DeregisterRuntimeDisplayBinding (displayBinding);
+				defaultDisplayBindings.Remove (key);
+			}
 		}
 
 		static string GetKey (FilePath fileName, string mimeType)

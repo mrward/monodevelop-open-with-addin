@@ -39,7 +39,7 @@ namespace MonoDevelop.OpenWith
 			if (fileViewer.IsDisplayBinding)
 				return new OpenWithViewDisplayBinding (fileViewer);
 			else if (fileViewer.IsApplication)
-				return new DesktopApplicationDisplayBinding (fileName, mimeType, fileViewer.GetApplication ());
+				return new OpenWithDesktopApplicationDisplayBinding (fileName, mimeType, fileViewer.GetApplication ());
 
 			return null;
 		}

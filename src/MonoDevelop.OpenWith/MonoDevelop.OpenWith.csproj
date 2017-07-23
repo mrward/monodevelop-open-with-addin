@@ -33,7 +33,7 @@
     <Compile Include="MonoDevelop.OpenWith\OpenWithPreferencesDesktopApplication.cs" />
     <Compile Include="MonoDevelop.OpenWith\OpenWithServices.cs" />
     <Compile Include="MonoDevelop.OpenWith\OpenWithViewDisplayBinding.cs" />
-    <Compile Include="MonoDevelop.OpenWith\DesktopApplicationDisplayBinding.cs" />
+    <Compile Include="MonoDevelop.OpenWith\OpenWithDesktopApplicationDisplayBinding.cs" />
     <Compile Include="MonoDevelop.OpenWith\DisplayBindingMappings.cs" />
     <Compile Include="MonoDevelop.OpenWith\MacDesktopApplication.cs" />
     <Compile Include="MonoDevelop.OpenWith\PreferencesDisplayBinding.cs" />
