@@ -32,7 +32,7 @@ using MonoDevelop.Projects;
 
 namespace MonoDevelop.OpenWith
 {
-	class OpenWithDesktopApplicationDisplayBinding : IExternalDisplayBinding
+	class OpenWithDesktopApplicationDisplayBinding : IExternalDisplayBinding, IOpenWithDisplayBinding
 	{
 		DefaultDesktopApplication application;
 		string fileExtension;

@@ -40,6 +40,9 @@ namespace MonoDevelop.OpenWith
 {
 	class OpenWithFileViewer
 	{
+		/// <summary>
+		/// Returns the pre-defined file viewers.
+		/// </summary>
 		public static IEnumerable<OpenWithFileViewer> GetFileViewers (
 			FilePath filePath,
 			string mimeType,
@@ -49,6 +52,8 @@ namespace MonoDevelop.OpenWith
 
 			foreach (var b in GetDisplayBindings (filePath, mimeType, ownerProject)) {
 				if (b is PreferencesDisplayBinding)
+					continue;
+				if (b is IOpenWithDisplayBinding)
 					continue;
 				var vb = b as IViewDisplayBinding;
 				if (vb != null) {

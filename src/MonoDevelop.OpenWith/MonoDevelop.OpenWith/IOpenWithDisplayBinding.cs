@@ -1,5 +1,5 @@
 ﻿//
-// OpenWithViewDisplayBinding.cs
+// IOpenWithDisplayBinding.cs
 //
 // Author:
 //       Matt Ward <matt.ward@xamarin.com>
@@ -24,50 +24,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using MonoDevelop.Core;
-using MonoDevelop.Ide.Gui;
-using MonoDevelop.Projects;
-
 namespace MonoDevelop.OpenWith
 {
-	class OpenWithViewDisplayBinding : IViewDisplayBinding, IOpenWithDisplayBinding
+	interface IOpenWithDisplayBinding
 	{
-		public OpenWithViewDisplayBinding (OpenWithFileViewer fileViewer)
-		{
-			Name = fileViewer.Title;
-		}
-
-		public bool CanUseAsDefault {
-			get { return true; }
-		}
-
-		public string Name { get; private set; }
-
-		public bool CanHandle (FilePath fileName, string mimeType, Project ownerProject)
-		{
-			return GetViewDisplayBinding (fileName, mimeType, ownerProject) != null;
-		}
-
-		public ViewContent CreateContent (FilePath fileName, string mimeType, Project ownerProject)
-		{
-			var displayBinding = GetViewDisplayBinding (fileName, mimeType, ownerProject);
-			return displayBinding.CreateContent (fileName, mimeType, ownerProject);
-		}
-
-		IViewDisplayBinding GetViewDisplayBinding (FilePath fileName, string mimeType, Project ownerProject)
-		{
-			return OpenWithServices.Mappings.GetDisplayBinding (
-				fileName,
-				mimeType,
-				ownerProject) as IViewDisplayBinding;
-		}
-
-		public override string ToString ()
-		{
-			return string.Format (
-				"Name={0}, CanUseAsDefault={1}]",
-				Name,
-				CanUseAsDefault);
-		}
 	}
 }

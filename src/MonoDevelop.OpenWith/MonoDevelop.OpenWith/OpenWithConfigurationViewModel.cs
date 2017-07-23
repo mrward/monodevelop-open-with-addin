@@ -84,13 +84,28 @@ namespace MonoDevelop.OpenWith
 
 			fileViewers = OpenWithFileViewer.GetFileViewers (fileName, mimeType, project).ToList ();
 
+			ConfigureDefaultFileViewer ();
+
+			return fileViewers;
+		}
+
+		void ConfigureDefaultFileViewer ()
+		{
+			// Find custom default.
+			foreach (var fileViewer in fileViewers) {
+				if (OpenWithServices.Mappings.IsCustomDefault (fileName, mimeType, fileViewer)) {
+					originalDefaultFileViewer = fileViewer;
+					defaultFileViewer = fileViewer;
+					return;
+				}
+			}
+
+			// No custom defaults.
 			var firstFileViewer = fileViewers.FirstOrDefault ();
 			if (firstFileViewer.CanUseAsDefault) {
 				originalDefaultFileViewer = firstFileViewer;
 				defaultFileViewer = firstFileViewer;
 			}
-
-			return fileViewers;
 		}
 
 		void OnSelectedItemChanged ()

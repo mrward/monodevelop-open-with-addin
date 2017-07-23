@@ -87,5 +87,15 @@ namespace MonoDevelop.OpenWith
 		{
 			return $"{fileName.Extension}-{mimeType}";
 		}
+
+		public bool IsCustomDefault (FilePath fileName, string mimeType, OpenWithFileViewer fileViewer)
+		{
+			string mapping = null;
+			string key = GetKey (fileName, mimeType);
+			if (!mappings.TryGetValue (key, out mapping))
+				return false;
+
+			return mapping == fileViewer.GetMappingKey ();
+		}
 	}
 }
