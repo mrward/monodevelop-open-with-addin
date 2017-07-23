@@ -29,7 +29,6 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\AddinInfo.cs" />
-    <Compile Include="MonoDevelop.OpenWith\OpenWithExternalDisplayBinding.cs" />
     <Compile Include="MonoDevelop.OpenWith\OpenWithPreferencesDesktopApplication.cs" />
     <Compile Include="MonoDevelop.OpenWith\OpenWithServices.cs" />
     <Compile Include="MonoDevelop.OpenWith\OpenWithViewDisplayBinding.cs" />
