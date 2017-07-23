@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\MonoDevelop.Addins.0.3.15\build\net45\MonoDevelop.Addins.props" Condition="Exists('..\packages\MonoDevelop.Addins.0.3.15\build\net45\MonoDevelop.Addins.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4892A2D0-2021-464C-A323-C0728C06E418}</ProjectGuid>
+    <ProjectTypeGuids>{86F6BF2A-E449-4B3E-813B-9ACC37E5545F};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>MonoDevelop.OpenWith</RootNamespace>
+    <AssemblyName>MonoDevelop.OpenWith</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\bin</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\bin</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\AddinInfo.cs" />
+    <Compile Include="MonoDevelop.OpenWith\OpenWithExternalDisplayBinding.cs" />
+    <Compile Include="MonoDevelop.OpenWith\OpenWithPreferencesDesktopApplication.cs" />
+    <Compile Include="MonoDevelop.OpenWith\OpenWithServices.cs" />
+    <Compile Include="MonoDevelop.OpenWith\OpenWithViewDisplayBinding.cs" />
+    <Compile Include="MonoDevelop.OpenWith\DesktopApplicationDisplayBinding.cs" />
+    <Compile Include="MonoDevelop.OpenWith\DisplayBindingMappings.cs" />
+    <Compile Include="MonoDevelop.OpenWith\MacDesktopApplication.cs" />
+    <Compile Include="MonoDevelop.OpenWith\PreferencesDisplayBinding.cs" />
+    <Compile Include="MonoDevelop.OpenWith\StartupHandler.cs" />
+    <Compile Include="MonoDevelop.OpenWith\OpenWithDialog.cs" />
+    <Compile Include="MonoDevelop.OpenWith\OpenWithDialog.UI.cs">
+      <DependentUpon>OpenWithDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MonoDevelop.OpenWith\OpenWithConfigurationViewModel.cs" />
+    <Compile Include="MonoDevelop.OpenWith\OpenWithFileViewer.cs" />
+    <Compile Include="MonoDevelop.OpenWith\DisplayBindingFactory.cs" />
+    <Compile Include="MonoDevelop.OpenWith\DefaultDesktopApplication.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Manifest.addin.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\MonoDevelop.Addins.0.3.15\build\net45\MonoDevelop.Addins.targets" Condition="Exists('..\packages\MonoDevelop.Addins.0.3.15\build\net45\MonoDevelop.Addins.targets')" />
+</Project>

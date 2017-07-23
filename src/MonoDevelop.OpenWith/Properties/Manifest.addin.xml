@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ExtensionModel>
+	<Runtime>
+	</Runtime>
+
+	<Extension path = "/MonoDevelop/Ide/DisplayBindings">
+		<DisplayBinding
+			id="CustomOpenDisplayBindingPreferences"
+			insertafter="DefaultDisplayBinding"
+			class="MonoDevelop.OpenWith.PreferencesDisplayBinding" />
+	</Extension>
+
+	<Extension path="/MonoDevelop/Ide/StartupHandlers">
+		<Class class="MonoDevelop.OpenWith.StartupHandler" />
+	</Extension>
+</ExtensionModel>
