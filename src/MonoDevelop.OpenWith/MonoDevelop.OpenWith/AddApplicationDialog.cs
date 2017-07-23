@@ -1,5 +1,5 @@
 ﻿//
-// OpenWithPreferencesDesktopApplication.cs
+// AddApplicationDialog.cs
 //
 // Author:
 //       Matt Ward <matt.ward@xamarin.com>
@@ -24,38 +24,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using MonoDevelop.Ide.Desktop;
+using System;
 using MonoDevelop.Core;
-using MonoDevelop.Projects;
+using Xwt;
 
 namespace MonoDevelop.OpenWith
 {
-	class OpenWithPreferencesDesktopApplication : DesktopApplication
+	partial class AddApplicationDialog
 	{
-		FilePath fileName;
-		string mimeType;
-		Project project;
-
-		public OpenWithPreferencesDesktopApplication (
-			FilePath fileName,
-			string mimeType,
-			Project project)
-			: base (
-				"OpenPreferencesDesktopApplication",
-				GettextCatalog.GetString ("Preferences..."),
-				false)
+		public AddApplicationDialog ()
 		{
-			this.fileName = fileName;
-			this.mimeType = mimeType;
-			this.project = project;
+			Build ();
+
+			browseButton.Clicked += BrowseButtonClicked;
 		}
 
-		public override void Launch (params string[] files)
+		void BrowseButtonClicked (object sender, EventArgs e)
 		{
-			var viewModel = new OpenWithConfigurationViewModel (fileName, mimeType, project);
-
-			using (var dialog = new OpenWithDialog (viewModel)) {
-				dialog.ShowWithParent ();
+			using (var folderDialog = new OpenFileDialog ()) {
+				folderDialog.Title = GettextCatalog.GetString ("Select Application");
+				folderDialog.Multiselect = false;
+				if (folderDialog.Run ()) {
+					applicationTextEntry.Text = folderDialog.FileName;
+				}
 			}
 		}
 	}

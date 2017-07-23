@@ -25,7 +25,6 @@
 // THE SOFTWARE.
 
 using System;
-using MonoDevelop.Ide;
 using Xwt;
 
 namespace MonoDevelop.OpenWith
@@ -40,17 +39,12 @@ namespace MonoDevelop.OpenWith
 
 			Build ();
 
+			addButton.Clicked += AddButtonClicked;
 			okButton.Clicked += OkButtonClicked;
 			setAsDefaultButton.Clicked += SetAsDefaultButtonClicked;
 			openWithItemsListBox.SelectionChanged += OpenWithItemsListBoxSelectionChanged;
 
 			AddFileViewers ();
-		}
-
-		public void ShowWithParent ()
-		{
-			WindowFrame parent = Toolkit.CurrentEngine.WrapWindow (IdeApp.Workbench.RootWindow);
-			Run (parent);
 		}
 
 		void AddFileViewers ()
@@ -91,6 +85,14 @@ namespace MonoDevelop.OpenWith
 			openWithItemsListBox.Items.Clear ();
 			AddFileViewers ();
 			openWithItemsListBox.SelectedItem = selectedItem;
+		}
+
+		void AddButtonClicked (object sender, EventArgs e)
+		{
+			using (var dialog = new AddApplicationDialog ()) {
+				if (dialog.ShowWithParent () == Command.Ok) {
+				}
+			}
 		}
 	}
 }

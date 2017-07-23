@@ -46,6 +46,11 @@
     <Compile Include="MonoDevelop.OpenWith\DisplayBindingFactory.cs" />
     <Compile Include="MonoDevelop.OpenWith\DefaultDesktopApplication.cs" />
     <Compile Include="MonoDevelop.OpenWith\IOpenWithDisplayBinding.cs" />
+    <Compile Include="MonoDevelop.OpenWith\AddApplicationDialog.cs" />
+    <Compile Include="MonoDevelop.OpenWith\AddApplicationDialog.UI.cs">
+      <DependentUpon>AddApplicationDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MonoDevelop.OpenWith\DialogExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Manifest.addin.xml" />

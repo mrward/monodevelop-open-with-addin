@@ -24,8 +24,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using Xwt;
 using MonoDevelop.Core;
+using Xwt;
 
 namespace MonoDevelop.OpenWith
 {

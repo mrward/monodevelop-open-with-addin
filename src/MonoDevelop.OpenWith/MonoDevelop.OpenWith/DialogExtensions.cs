@@ -1,5 +1,5 @@
 ﻿//
-// OpenWithPreferencesDesktopApplication.cs
+// DialogExtensions.cs
 //
 // Author:
 //       Matt Ward <matt.ward@xamarin.com>
@@ -24,39 +24,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using MonoDevelop.Ide.Desktop;
-using MonoDevelop.Core;
-using MonoDevelop.Projects;
+using MonoDevelop.Ide;
+using Xwt;
 
 namespace MonoDevelop.OpenWith
 {
-	class OpenWithPreferencesDesktopApplication : DesktopApplication
+	static class DialogExtensions
 	{
-		FilePath fileName;
-		string mimeType;
-		Project project;
-
-		public OpenWithPreferencesDesktopApplication (
-			FilePath fileName,
-			string mimeType,
-			Project project)
-			: base (
-				"OpenPreferencesDesktopApplication",
-				GettextCatalog.GetString ("Preferences..."),
-				false)
+		public static Command ShowWithParent (this Dialog dialog)
 		{
-			this.fileName = fileName;
-			this.mimeType = mimeType;
-			this.project = project;
-		}
-
-		public override void Launch (params string[] files)
-		{
-			var viewModel = new OpenWithConfigurationViewModel (fileName, mimeType, project);
-
-			using (var dialog = new OpenWithDialog (viewModel)) {
-				dialog.ShowWithParent ();
-			}
+			WindowFrame parent = Toolkit.CurrentEngine.WrapWindow (IdeApp.Workbench.RootWindow);
+			return dialog.Run (parent);
 		}
 	}
 }
