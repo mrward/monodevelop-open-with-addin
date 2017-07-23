@@ -24,6 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -85,6 +86,8 @@ namespace MonoDevelop.OpenWith
 
 			fileViewers = OpenWithFileViewer.GetFileViewers (fileName, mimeType, project).ToList ();
 
+			fileViewers.AddRange (OpenWithServices.Mappings.GetUserDefinedFileViewers (fileName, mimeType));
+
 			ConfigureDefaultFileViewer ();
 
 			return fileViewers;
@@ -126,6 +129,13 @@ namespace MonoDevelop.OpenWith
 
 		public void SaveChanges ()
 		{
+			foreach (var newFileViewer in fileViewers.Where (IsNewUserDefinedFileViewer)) {
+				OpenWithServices.Mappings.AddUserDefinedViewer (
+					fileName,
+					mimeType,
+					(UserDefinedOpenWithFileViewer)newFileViewer);
+			}
+
 			if (defaultFileViewer != originalDefaultFileViewer) {
 				if (defaultFileViewer != nonOverriddenOriginalDefaultFileViewer) {
 					OpenWithServices.Mappings.SetAsDefault (fileName, mimeType, defaultFileViewer);
@@ -135,6 +145,21 @@ namespace MonoDevelop.OpenWith
 					OpenWithServices.Mappings.ClearDefault (fileName, mimeType);
 				}
 			}
+		}
+
+		public void AddNewApplication (string application, string arguments, string friendlyName)
+		{
+			var app = new MacDesktopApplication (application, friendlyName, isDefault: false);
+			var fileViewer = new UserDefinedOpenWithFileViewer (app);
+			fileViewer.IsNew = true;
+
+			fileViewers.Add (fileViewer);
+		}
+
+		bool IsNewUserDefinedFileViewer (OpenWithFileViewer fileViewer)
+		{
+			var userDefinedFileViewer = fileViewer as UserDefinedOpenWithFileViewer;
+			return userDefinedFileViewer?.IsNew == true;
 		}
 	}
 }

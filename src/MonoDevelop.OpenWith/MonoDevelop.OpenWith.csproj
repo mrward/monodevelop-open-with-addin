@@ -51,6 +51,7 @@
       <DependentUpon>AddApplicationDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="MonoDevelop.OpenWith\DialogExtensions.cs" />
+    <Compile Include="MonoDevelop.OpenWith\UserDefinedOpenWithFileViewer.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Manifest.addin.xml" />

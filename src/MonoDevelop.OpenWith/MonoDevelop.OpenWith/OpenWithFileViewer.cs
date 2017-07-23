@@ -91,7 +91,7 @@ namespace MonoDevelop.OpenWith
 		IViewDisplayBinding binding;
 		DesktopApplication app;
 
-		OpenWithFileViewer (DesktopApplication app)
+		public OpenWithFileViewer (DesktopApplication app)
 		{
 			this.app = app;
 		}

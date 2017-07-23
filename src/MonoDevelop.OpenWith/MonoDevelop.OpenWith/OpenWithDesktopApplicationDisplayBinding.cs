@@ -34,23 +34,27 @@ namespace MonoDevelop.OpenWith
 {
 	class OpenWithDesktopApplicationDisplayBinding : IExternalDisplayBinding, IOpenWithDisplayBinding
 	{
-		DefaultDesktopApplication application;
+		DesktopApplication application;
+		DefaultDesktopApplication defaultApplication;
 		string fileExtension;
 		string mimeType;
 
 		public OpenWithDesktopApplicationDisplayBinding (
 			FilePath fileName,
 			string mimeType,
-			DesktopApplication application)
+			DesktopApplication application,
+			bool canUseAsDefault = true)
 		{
 			fileExtension = fileName.Extension;
 			this.mimeType = mimeType;
-			this.application = new DefaultDesktopApplication (application);
+			this.application = application;
+
+			defaultApplication = new DefaultDesktopApplication (application);
+
+			CanUseAsDefault = canUseAsDefault;
 		}
 
-		public bool CanUseAsDefault {
-			get { return true; }
-		}
+		public bool CanUseAsDefault { get; set; }
 
 		public bool CanHandle (FilePath fileName, string mimeType, Project ownerProject)
 		{
@@ -62,6 +66,8 @@ namespace MonoDevelop.OpenWith
 
 		public DesktopApplication GetApplication (FilePath fileName, string mimeType, Project ownerProject)
 		{
+			if (CanUseAsDefault)
+				return defaultApplication;
 			return application;
 		}
 

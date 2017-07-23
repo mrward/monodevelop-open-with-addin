@@ -91,6 +91,12 @@ namespace MonoDevelop.OpenWith
 		{
 			using (var dialog = new AddApplicationDialog ()) {
 				if (dialog.ShowWithParent () == Command.Ok) {
+					viewModel.AddNewApplication (
+						dialog.Application,
+						dialog.Arguments,
+						dialog.FriendlyName);
+
+					UpdateTitles ();
 				}
 			}
 		}

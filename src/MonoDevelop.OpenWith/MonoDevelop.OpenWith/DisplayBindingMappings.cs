@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MonoDevelop.Core;
 using MonoDevelop.Ide.Gui;
 using MonoDevelop.Projects;
@@ -39,6 +40,9 @@ namespace MonoDevelop.OpenWith
 
 		Dictionary<string, IDisplayBinding> defaultDisplayBindings =
 			new Dictionary<string, IDisplayBinding> (StringComparer.OrdinalIgnoreCase);
+
+		Dictionary<string, List<UserDefinedOpenWithFileViewer>> userDefinedFileViewers =
+			new Dictionary<string, List<UserDefinedOpenWithFileViewer>> (StringComparer.OrdinalIgnoreCase);
 
 		public IDisplayBinding GetDisplayBinding (FilePath fileName, string mimeType, Project ownerProject)
 		{
@@ -66,6 +70,13 @@ namespace MonoDevelop.OpenWith
 
 			mappings [key] = fileViewer.GetMappingKey ();
 
+			var userDefinedFileViewer = fileViewer as UserDefinedOpenWithFileViewer;
+			if (userDefinedFileViewer != null) {
+				defaultDisplayBindings [key] = userDefinedFileViewer.DisplayBinding;
+				userDefinedFileViewer.SetAsDefault ();
+				return;
+			}
+
 			var displayBinding = DisplayBindingFactory.CreateDisplayBinding (fileName, mimeType, fileViewer);
 			defaultDisplayBindings [key] = displayBinding;
 			DisplayBindingService.RegisterRuntimeDisplayBinding (displayBinding);
@@ -78,7 +89,12 @@ namespace MonoDevelop.OpenWith
 
 			IDisplayBinding displayBinding = null;
 			if (defaultDisplayBindings.TryGetValue (key, out displayBinding)) {
-				DisplayBindingService.DeregisterRuntimeDisplayBinding (displayBinding);
+				var userDefinedViewer = GetUserDefinedFileViewer (fileName, mimeType, displayBinding);
+				if (userDefinedViewer != null) {
+					userDefinedViewer.ClearAsDefault ();
+				} else {
+					DisplayBindingService.DeregisterRuntimeDisplayBinding (displayBinding);
+				}
 				defaultDisplayBindings.Remove (key);
 			}
 		}
@@ -96,6 +112,46 @@ namespace MonoDevelop.OpenWith
 				return false;
 
 			return mapping == fileViewer.GetMappingKey ();
+		}
+
+		public void AddUserDefinedViewer (
+			FilePath fileName,
+			string mimeType,
+			UserDefinedOpenWithFileViewer fileViewer)
+		{
+			List<UserDefinedOpenWithFileViewer> existingFileViewers = 
+				GetUserDefinedFileViewers (fileName, mimeType);
+
+			string key = GetKey (fileName, mimeType);
+
+			fileViewer.IsNew = false;
+			existingFileViewers.Add (fileViewer);
+			userDefinedFileViewers [key] = existingFileViewers;
+
+			var displayBinding = DisplayBindingFactory.CreateDisplayBinding (fileName, mimeType, fileViewer);
+			fileViewer.DisplayBinding = displayBinding;
+			DisplayBindingService.RegisterRuntimeDisplayBinding (displayBinding);
+		}
+
+		public List<UserDefinedOpenWithFileViewer> GetUserDefinedFileViewers (
+			FilePath fileName,
+			string mimeType)
+		{
+			List<UserDefinedOpenWithFileViewer> existingFileViewers = null;
+			string key = GetKey (fileName, mimeType);
+			if (!userDefinedFileViewers.TryGetValue (key, out existingFileViewers))
+				existingFileViewers = new List<UserDefinedOpenWithFileViewer> ();
+
+			return existingFileViewers;
+		}
+
+		UserDefinedOpenWithFileViewer GetUserDefinedFileViewer (
+			FilePath fileName,
+			string mimeType,
+			IDisplayBinding displayBinding)
+		{
+			return GetUserDefinedFileViewers (fileName, mimeType)
+				.FirstOrDefault (fileViewer => fileViewer.DisplayBinding == displayBinding);
 		}
 	}
 }

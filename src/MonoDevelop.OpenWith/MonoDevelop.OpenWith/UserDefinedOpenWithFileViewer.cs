@@ -1,5 +1,5 @@
 ﻿//
-// AddApplicationDialog.cs
+// UserDefinedOpenWithFileViewer.cs
 //
 // Author:
 //       Matt Ward <matt.ward@xamarin.com>
@@ -24,50 +24,37 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System;
-using MonoDevelop.Core;
-using Xwt;
+using MonoDevelop.Ide.Desktop;
+using MonoDevelop.Ide.Gui;
 
 namespace MonoDevelop.OpenWith
 {
-	partial class AddApplicationDialog
+	class UserDefinedOpenWithFileViewer : OpenWithFileViewer
 	{
-		public AddApplicationDialog ()
+		public UserDefinedOpenWithFileViewer (DesktopApplication app)
+			: base (app)
 		{
-			Build ();
-
-			okButton.Sensitive = false;
-
-			browseButton.Clicked += BrowseButtonClicked;
-			applicationTextEntry.Changed += ApplicationTextEntryChanged;
 		}
 
-		void BrowseButtonClicked (object sender, EventArgs e)
+		public bool IsNew { get; set; }
+		public IDisplayBinding DisplayBinding { get; set; }
+
+		public void SetAsDefault ()
 		{
-			using (var folderDialog = new OpenFileDialog ()) {
-				folderDialog.Title = GettextCatalog.GetString ("Select Application");
-				folderDialog.Multiselect = false;
-				if (folderDialog.Run ()) {
-					applicationTextEntry.Text = folderDialog.FileName;
-				}
+			SetAsDefault (true);
+		}
+
+		public void ClearAsDefault ()
+		{
+			SetAsDefault (false);
+		}
+
+		void SetAsDefault (bool isDefault)
+		{
+			var openWithDisplayBinding = DisplayBinding as OpenWithDesktopApplicationDisplayBinding;
+			if (openWithDisplayBinding != null) {
+				openWithDisplayBinding.CanUseAsDefault = isDefault;
 			}
-		}
-
-		public string Application {
-			get { return applicationTextEntry.Text; }
-		}
-
-		public string Arguments {
-			get { return argumentsTextEntry.Text; }
-		}
-
-		public string FriendlyName {
-			get { return friendlyNameTextEntry.Text; }
-		}
-
-		void ApplicationTextEntryChanged (object sender, EventArgs e)
-		{
-			okButton.Sensitive = Application.Length > 0;
 		}
 	}
 }
