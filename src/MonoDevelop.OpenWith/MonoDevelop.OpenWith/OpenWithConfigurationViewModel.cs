@@ -41,6 +41,7 @@ namespace MonoDevelop.OpenWith
 		OpenWithFileViewer selectedItem;
 		OpenWithFileViewer defaultFileViewer;
 		OpenWithFileViewer originalDefaultFileViewer;
+		OpenWithFileViewer nonOverriddenOriginalDefaultFileViewer;
 
 		public OpenWithFileViewer SelectedItem {
 			get { return selectedItem; }
@@ -91,20 +92,19 @@ namespace MonoDevelop.OpenWith
 
 		void ConfigureDefaultFileViewer ()
 		{
-			// Find custom default.
+			// Find the default file viewer ignoring any customisation.
+			nonOverriddenOriginalDefaultFileViewer = fileViewers
+				.FirstOrDefault (fileViewer => fileViewer.CanUseAsDefault);
+
+			originalDefaultFileViewer = nonOverriddenOriginalDefaultFileViewer;
+			defaultFileViewer = nonOverriddenOriginalDefaultFileViewer;
+
+			// Find custom default file viewer.
 			foreach (var fileViewer in fileViewers) {
 				if (OpenWithServices.Mappings.IsCustomDefault (fileName, mimeType, fileViewer)) {
 					originalDefaultFileViewer = fileViewer;
 					defaultFileViewer = fileViewer;
-					return;
 				}
-			}
-
-			// No custom defaults.
-			var firstFileViewer = fileViewers.FirstOrDefault ();
-			if (firstFileViewer.CanUseAsDefault) {
-				originalDefaultFileViewer = firstFileViewer;
-				defaultFileViewer = firstFileViewer;
 			}
 		}
 
@@ -126,8 +126,15 @@ namespace MonoDevelop.OpenWith
 
 		public void SaveChanges ()
 		{
-			if (defaultFileViewer != originalDefaultFileViewer)
-				OpenWithServices.Mappings.SetAsDefault (fileName, mimeType, defaultFileViewer);
+			if (defaultFileViewer != originalDefaultFileViewer) {
+				if (defaultFileViewer != nonOverriddenOriginalDefaultFileViewer) {
+					OpenWithServices.Mappings.SetAsDefault (fileName, mimeType, defaultFileViewer);
+				} else {
+					// The default file viewer has been changed back to the default
+					// that the IDE would use anyway so just clear the default mapping.
+					OpenWithServices.Mappings.ClearDefault (fileName, mimeType);
+				}
+			}
 		}
 	}
 }
