@@ -160,7 +160,7 @@ namespace MonoDevelop.OpenWith
 
 		public void AddNewApplication (string application, string arguments, string friendlyName)
 		{
-			var app = new MacDesktopApplication (application, friendlyName, isDefault: false);
+			var app = DesktopApplicationFactory.CreateApplication (application, arguments, friendlyName);
 			var fileViewer = new UserDefinedOpenWithFileViewer (app);
 			fileViewer.IsNew = true;
 
