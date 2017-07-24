@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 
 using System;
+using System.IO;
 using MonoDevelop.Core;
 using Xwt;
 
@@ -40,17 +41,26 @@ namespace MonoDevelop.OpenWith
 
 			browseButton.Clicked += BrowseButtonClicked;
 			applicationTextEntry.Changed += ApplicationTextEntryChanged;
+			friendlyNameTextEntry.Changed += FriendlyNameTextEntryChanged;
 		}
 
 		void BrowseButtonClicked (object sender, EventArgs e)
 		{
 			using (var folderDialog = new OpenFileDialog ()) {
-				folderDialog.Title = GettextCatalog.GetString ("Select Application");
+				folderDialog.Title = GettextCatalog.GetString ("Browse");
 				folderDialog.Multiselect = false;
 				if (folderDialog.Run ()) {
-					applicationTextEntry.Text = folderDialog.FileName;
+					OnApplicationSelected (folderDialog.FileName);
 				}
 			}
+		}
+
+		void OnApplicationSelected (string fileName)
+		{
+			applicationTextEntry.Text = fileName;
+
+			if (friendlyNameTextEntry.Text.Length == 0)
+				friendlyNameTextEntry.Text = Path.GetFileName (fileName);
 		}
 
 		public string Application {
@@ -67,7 +77,17 @@ namespace MonoDevelop.OpenWith
 
 		void ApplicationTextEntryChanged (object sender, EventArgs e)
 		{
-			okButton.Sensitive = Application.Length > 0;
+			UpdateButtons ();
+		}
+
+		void FriendlyNameTextEntryChanged (object sender, EventArgs e)
+		{
+			UpdateButtons ();
+		}
+
+		void UpdateButtons ()
+		{
+			okButton.Sensitive = Application.Length > 0 && FriendlyName.Length > 0;
 		}
 	}
 }
