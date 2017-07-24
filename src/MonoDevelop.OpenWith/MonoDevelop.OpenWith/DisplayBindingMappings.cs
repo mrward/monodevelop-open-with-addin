@@ -153,5 +153,23 @@ namespace MonoDevelop.OpenWith
 			return GetUserDefinedFileViewers (fileName, mimeType)
 				.FirstOrDefault (fileViewer => fileViewer.DisplayBinding == displayBinding);
 		}
+
+		public void RemoveUserDefinedViewer (
+			FilePath fileName,
+			string mimeType,
+			UserDefinedOpenWithFileViewer fileViewer)
+		{
+			List<UserDefinedOpenWithFileViewer> existingFileViewers =
+				GetUserDefinedFileViewers (fileName, mimeType);
+
+			string key = GetKey (fileName, mimeType);
+
+			existingFileViewers.Remove (fileViewer);
+
+			if (!existingFileViewers.Any ())
+				userDefinedFileViewers.Remove (key);
+
+			DisplayBindingService.DeregisterRuntimeDisplayBinding (fileViewer.DisplayBinding);
+		}
 	}
 }

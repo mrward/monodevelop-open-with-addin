@@ -42,6 +42,7 @@ namespace MonoDevelop.OpenWith
 			addButton.Clicked += AddButtonClicked;
 			okButton.Clicked += OkButtonClicked;
 			setAsDefaultButton.Clicked += SetAsDefaultButtonClicked;
+			removeButton.Clicked += RemoveButtonClicked;
 			openWithItemsListBox.SelectionChanged += OpenWithItemsListBoxSelectionChanged;
 
 			AddFileViewers ();
@@ -99,6 +100,14 @@ namespace MonoDevelop.OpenWith
 					UpdateTitles ();
 				}
 			}
+		}
+
+		void RemoveButtonClicked (object sender, EventArgs e)
+		{
+			viewModel.RemoveSelectedItem ();
+
+			UpdateTitles ();
+			UpdateButtons ();
 		}
 	}
 }

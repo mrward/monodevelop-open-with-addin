@@ -44,6 +44,9 @@ namespace MonoDevelop.OpenWith
 		OpenWithFileViewer originalDefaultFileViewer;
 		OpenWithFileViewer nonOverriddenOriginalDefaultFileViewer;
 
+		List<UserDefinedOpenWithFileViewer> removedFileViewers
+			= new List<UserDefinedOpenWithFileViewer> ();
+
 		public OpenWithFileViewer SelectedItem {
 			get { return selectedItem; }
 			set {
@@ -115,6 +118,7 @@ namespace MonoDevelop.OpenWith
 		{
 			if (selectedItem != null) {
 				CanSetAsDefault = !(selectedItem == defaultFileViewer);
+				CanRemove = (selectedItem is UserDefinedOpenWithFileViewer);
 			} else {
 				CanRemove = false;
 				CanSetAsDefault = false;
@@ -145,6 +149,13 @@ namespace MonoDevelop.OpenWith
 					OpenWithServices.Mappings.ClearDefault (fileName, mimeType);
 				}
 			}
+
+			foreach (var removedFileViewer in removedFileViewers) {
+				OpenWithServices.Mappings.RemoveUserDefinedViewer (
+					fileName,
+					mimeType,
+					removedFileViewer);
+			}
 		}
 
 		public void AddNewApplication (string application, string arguments, string friendlyName)
@@ -160,6 +171,23 @@ namespace MonoDevelop.OpenWith
 		{
 			var userDefinedFileViewer = fileViewer as UserDefinedOpenWithFileViewer;
 			return userDefinedFileViewer?.IsNew == true;
+		}
+
+		public void RemoveSelectedItem ()
+		{
+			if (selectedItem == null)
+				return;
+
+			removedFileViewers.Add ((UserDefinedOpenWithFileViewer)selectedItem);
+			fileViewers.Remove (selectedItem);
+
+			if (selectedItem == defaultFileViewer) {
+				defaultFileViewer = nonOverriddenOriginalDefaultFileViewer;
+			}
+
+			selectedItem = null;
+
+			OnSelectedItemChanged ();
 		}
 	}
 }

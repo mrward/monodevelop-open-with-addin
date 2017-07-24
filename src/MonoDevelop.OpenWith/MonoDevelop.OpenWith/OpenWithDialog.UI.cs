@@ -65,7 +65,7 @@ namespace MonoDevelop.OpenWith
 			rightHandVBox.PackStart (addButton);
 
 			removeButton = new Button ();
-			removeButton.Label = GettextCatalog.GetString ("Remove...");
+			removeButton.Label = GettextCatalog.GetString ("Remove");
 			rightHandVBox.PackStart (removeButton);
 
 			setAsDefaultButton = new Button ();
