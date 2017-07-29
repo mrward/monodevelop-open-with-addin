@@ -25,12 +25,14 @@
 // THE SOFTWARE.
 
 using System;
+using MonoDevelop.Components;
 using MonoDevelop.Core;
+using MonoDevelop.Ide.Tasks;
 using Xwt;
 
 namespace MonoDevelop.OpenWith
 {
-	partial class AddApplicationDialog : Dialog
+	partial class AddApplicationDialog : Xwt.Dialog
 	{
 		DialogButton cancelButton;
 		DialogButton okButton;
@@ -41,6 +43,7 @@ namespace MonoDevelop.OpenWith
 		Label applicationLabel;
 		Label argumentsLabel;
 		Label friendlyNameLabel;
+		InformationPopoverWidget argumentsInfoWidget;
 
 		void Build ()
 		{
@@ -73,6 +76,10 @@ namespace MonoDevelop.OpenWith
 
 			argumentsTextEntry = new TextEntry ();
 			argumentsHBox.PackStart (argumentsTextEntry, true, true);
+
+			argumentsInfoWidget = new InformationPopoverWidget ();
+			argumentsInfoWidget.Severity = TaskSeverity.Information;
+			argumentsHBox.PackStart (argumentsInfoWidget);
 
 			var friendlyNameHBox = new HBox ();
 			mainVBox.PackStart (friendlyNameHBox);

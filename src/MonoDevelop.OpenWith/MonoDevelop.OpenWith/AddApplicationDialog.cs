@@ -37,6 +37,7 @@ namespace MonoDevelop.OpenWith
 		{
 			Build ();
 
+			argumentsInfoWidget.Message = GetInformationTooltipText ();
 			okButton.Sensitive = false;
 
 			browseButton.Clicked += BrowseButtonClicked;
@@ -89,6 +90,12 @@ namespace MonoDevelop.OpenWith
 		void UpdateButtons ()
 		{
 			okButton.Sensitive = Application.Length > 0 && FriendlyName.Length > 0;
+		}
+
+		string GetInformationTooltipText ()
+		{
+			return GettextCatalog.GetString (
+				"The filename being opened can be passed by using {0} in the arguments string. Note that Mac applications (.app) do not support passing arguments.");
 		}
 	}
 }
