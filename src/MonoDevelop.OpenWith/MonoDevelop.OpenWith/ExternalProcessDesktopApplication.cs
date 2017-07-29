@@ -33,6 +33,7 @@ namespace MonoDevelop.OpenWith
 	class ExternalProcessDesktopApplication : DesktopApplication
 	{
 		ProcessExecutionCommand command;
+		string arguments;
 
 		public ExternalProcessDesktopApplication (
 			ProcessExecutionCommand command,
@@ -41,13 +42,17 @@ namespace MonoDevelop.OpenWith
 			: base (command.Command, displayName, isDefault)
 		{
 			this.command = command;
+			arguments = command.Arguments;
 		}
 
 		public override void Launch (params string[] files)
 		{
-			var console = ExternalConsoleFactory.Instance.CreateConsole (true);
-			var handler = Runtime.ProcessService.GetDefaultExecutionHandler (command);
-			handler.Execute (command, console);
+			foreach (string file in files) {
+				var console = ExternalConsoleFactory.Instance.CreateConsole (true);
+				command.Arguments = string.Format (arguments, file);
+				var handler = Runtime.ProcessService.GetDefaultExecutionHandler (command);
+				handler.Execute (command, console);
+			}
 		}
 	}
 }
