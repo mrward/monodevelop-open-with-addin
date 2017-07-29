@@ -156,6 +156,8 @@ namespace MonoDevelop.OpenWith
 					mimeType,
 					removedFileViewer);
 			}
+
+			OpenWithServices.Mappings.Save ();
 		}
 
 		public void AddNewApplication (string application, string arguments, string friendlyName)

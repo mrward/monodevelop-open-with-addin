@@ -35,19 +35,19 @@ namespace MonoDevelop.OpenWith
 {
 	class DisplayBindingMappings
 	{
-		Dictionary<string, string> mappings =
-			new Dictionary<string, string> (StringComparer.OrdinalIgnoreCase);
+		Dictionary<DisplayBindingMappingKey, string> mappings =
+			new Dictionary<DisplayBindingMappingKey, string> ();
 
-		Dictionary<string, IDisplayBinding> defaultDisplayBindings =
-			new Dictionary<string, IDisplayBinding> (StringComparer.OrdinalIgnoreCase);
+		Dictionary<DisplayBindingMappingKey, IDisplayBinding> defaultDisplayBindings =
+			new Dictionary<DisplayBindingMappingKey, IDisplayBinding> ();
 
-		Dictionary<string, List<UserDefinedOpenWithFileViewer>> userDefinedFileViewers =
-			new Dictionary<string, List<UserDefinedOpenWithFileViewer>> (StringComparer.OrdinalIgnoreCase);
+		Dictionary<DisplayBindingMappingKey, List<UserDefinedOpenWithFileViewer>> userDefinedFileViewers =
+			new Dictionary<DisplayBindingMappingKey, List<UserDefinedOpenWithFileViewer>> ();
 
 		public IDisplayBinding GetDisplayBinding (FilePath fileName, string mimeType, Project ownerProject)
 		{
 			string mapping = null;
-			string key = GetKey (fileName, mimeType);
+			var key = GetKey (fileName, mimeType);
 			if (!mappings.TryGetValue (key, out mapping))
 				return null;
 
@@ -66,9 +66,8 @@ namespace MonoDevelop.OpenWith
 			if (fileViewer == null)
 				return;
 
-			string key = GetKey (fileName, mimeType);
+			var key = GetKey (fileName, mimeType);
 
-			mappings [key] = fileViewer.GetMappingKey ();
 
 			var userDefinedFileViewer = fileViewer as UserDefinedOpenWithFileViewer;
 			if (userDefinedFileViewer != null) {
@@ -77,6 +76,8 @@ namespace MonoDevelop.OpenWith
 				return;
 			}
 
+			mappings [key] = fileViewer.GetMappingKey ();
+
 			var displayBinding = DisplayBindingFactory.CreateDisplayBinding (fileName, mimeType, fileViewer);
 			defaultDisplayBindings [key] = displayBinding;
 			DisplayBindingService.RegisterRuntimeDisplayBinding (displayBinding);
@@ -84,7 +85,7 @@ namespace MonoDevelop.OpenWith
 
 		public void ClearDefault (FilePath fileName, string mimeType)
 		{
-			string key = GetKey (fileName, mimeType);
+			var key = GetKey (fileName, mimeType);
 			mappings.Remove (key);
 
 			IDisplayBinding displayBinding = null;
@@ -99,15 +100,19 @@ namespace MonoDevelop.OpenWith
 			}
 		}
 
-		static string GetKey (FilePath fileName, string mimeType)
+		static DisplayBindingMappingKey GetKey (FilePath fileName, string mimeType)
 		{
-			return $"{fileName.Extension}-{mimeType}";
+			return new DisplayBindingMappingKey (fileName, mimeType);
 		}
 
 		public bool IsCustomDefault (FilePath fileName, string mimeType, OpenWithFileViewer fileViewer)
 		{
+			var userDefinedFileViewer = fileViewer as UserDefinedOpenWithFileViewer;
+			if (userDefinedFileViewer != null)
+				return userDefinedFileViewer.IsDefault;
+
 			string mapping = null;
-			string key = GetKey (fileName, mimeType);
+			var key = GetKey (fileName, mimeType);
 			if (!mappings.TryGetValue (key, out mapping))
 				return false;
 
@@ -122,7 +127,7 @@ namespace MonoDevelop.OpenWith
 			List<UserDefinedOpenWithFileViewer> existingFileViewers = 
 				GetUserDefinedFileViewers (fileName, mimeType);
 
-			string key = GetKey (fileName, mimeType);
+			var key = GetKey (fileName, mimeType);
 
 			fileViewer.IsNew = false;
 			existingFileViewers.Add (fileViewer);
@@ -138,7 +143,7 @@ namespace MonoDevelop.OpenWith
 			string mimeType)
 		{
 			List<UserDefinedOpenWithFileViewer> existingFileViewers = null;
-			string key = GetKey (fileName, mimeType);
+			var key = GetKey (fileName, mimeType);
 			if (!userDefinedFileViewers.TryGetValue (key, out existingFileViewers))
 				existingFileViewers = new List<UserDefinedOpenWithFileViewer> ();
 
@@ -162,7 +167,7 @@ namespace MonoDevelop.OpenWith
 			List<UserDefinedOpenWithFileViewer> existingFileViewers =
 				GetUserDefinedFileViewers (fileName, mimeType);
 
-			string key = GetKey (fileName, mimeType);
+			var key = GetKey (fileName, mimeType);
 
 			existingFileViewers.Remove (fileViewer);
 
@@ -170,6 +175,66 @@ namespace MonoDevelop.OpenWith
 				userDefinedFileViewers.Remove (key);
 
 			DisplayBindingService.DeregisterRuntimeDisplayBinding (fileViewer.DisplayBinding);
+		}
+
+		public void Save ()
+		{
+			OpenWithSettings.Save (mappings, userDefinedFileViewers);
+		}
+
+		public void Load ()
+		{
+			var settings = OpenWithSettings.Read ();
+
+			LoadUserDefinedFileViewers (settings);
+
+			LoadDefaultDisplayBindingMappings (settings);
+		}
+
+		void LoadUserDefinedFileViewers (OpenWithSettings settings)
+		{
+			foreach (var keyValuePair in settings.UserDefinedFileViewers) {
+				var dummyFileName = new FilePath ("a.txt")
+					.ChangeExtension (keyValuePair.Key.FileExtension);
+				foreach (var userDefinedFileViewer in keyValuePair.Value) {
+					AddUserDefinedViewer (
+						dummyFileName,
+						keyValuePair.Key.MimeType,
+						userDefinedFileViewer);
+
+					if (userDefinedFileViewer.IsDefault) {
+						SetAsDefault (
+							dummyFileName,
+							keyValuePair.Key.MimeType,
+							userDefinedFileViewer);
+					}
+				}
+			}
+		}
+
+		void LoadDefaultDisplayBindingMappings (OpenWithSettings settings)
+		{
+			foreach (var keyValuePair in settings.Mappings) {
+				var dummyFileName = new FilePath ("a.txt")
+					.ChangeExtension (keyValuePair.Key.FileExtension);
+
+				var fileViewers = OpenWithFileViewer.GetFileViewers (
+					dummyFileName,
+					keyValuePair.Key.MimeType,
+					null).ToList ();
+
+				var openFileViewer = fileViewers
+					.FirstOrDefault (fileViewer => fileViewer.GetMappingKey () == keyValuePair.Value);
+				if (openFileViewer != null) {
+					SetAsDefault (dummyFileName, keyValuePair.Key.MimeType, openFileViewer);
+				} else {
+					LoggingService.LogWarning (
+						"Unable to find display binding for mapping. {0} Extension={1}, MimeType={2}",
+						keyValuePair.Value,
+						keyValuePair.Key.FileExtension,
+						keyValuePair.Key.MimeType);
+				}
+			}
 		}
 	}
 }

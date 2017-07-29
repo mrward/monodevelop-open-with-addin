@@ -1,5 +1,5 @@
 ﻿//
-// ExternalProcessDesktopApplication.cs
+// DisplayBindingMappingKey.cs
 //
 // Author:
 //       Matt Ward <matt.ward@xamarin.com>
@@ -24,36 +24,49 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using System;
 using MonoDevelop.Core;
-using MonoDevelop.Core.Execution;
-using MonoDevelop.Ide.Desktop;
 
 namespace MonoDevelop.OpenWith
 {
-	class ExternalProcessDesktopApplication : DesktopApplication
+	class DisplayBindingMappingKey : IEquatable<DisplayBindingMappingKey>
 	{
-		ProcessExecutionCommand command;
-
-		public ExternalProcessDesktopApplication (
-			ProcessExecutionCommand command,
-			string displayName,
-			bool isDefault)
-			: base (command.Command, displayName, isDefault)
+		public DisplayBindingMappingKey (FilePath fileName, string mimeType)
 		{
-			this.command = command;
-			Arguments = command.Arguments ?? string.Empty;
+			FileExtension = fileName.Extension;
+			MimeType = mimeType;
 		}
 
-		public string Arguments { get; private set; }
-
-		public override void Launch (params string[] files)
+		public DisplayBindingMappingKey (string fileExtension, string mimeType)
 		{
-			foreach (string file in files) {
-				var console = ExternalConsoleFactory.Instance.CreateConsole (true);
-				command.Arguments = string.Format (Arguments, file);
-				var handler = Runtime.ProcessService.GetDefaultExecutionHandler (command);
-				handler.Execute (command, console);
-			}
+			FileExtension = fileExtension;
+			MimeType = mimeType;
+		}
+
+		public string FileExtension { get; private set; }
+		public string MimeType { get; private set; }
+
+		string GetKey ()
+		{
+			return $"{FileExtension}-{MimeType}";
+		}
+
+		public override int GetHashCode()
+		{
+			return StringComparer.OrdinalIgnoreCase.GetHashCode (GetKey ());
+		}
+
+		public override bool Equals (object obj)
+		{
+			return Equals (obj as DisplayBindingMappingKey);
+		}
+
+		public bool Equals (DisplayBindingMappingKey other)
+		{
+			if (other != null)
+				return StringComparer.OrdinalIgnoreCase.Equals (other.GetKey (), GetKey ());
+
+			return false;
 		}
 	}
 }

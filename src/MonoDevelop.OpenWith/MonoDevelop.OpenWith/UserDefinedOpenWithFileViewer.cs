@@ -25,7 +25,6 @@
 // THE SOFTWARE.
 
 using MonoDevelop.Ide.Desktop;
-using MonoDevelop.Ide.Gui;
 
 namespace MonoDevelop.OpenWith
 {
@@ -37,7 +36,7 @@ namespace MonoDevelop.OpenWith
 		}
 
 		public bool IsNew { get; set; }
-		public IDisplayBinding DisplayBinding { get; set; }
+		public OpenWithDesktopApplicationDisplayBinding DisplayBinding { get; set; }
 
 		public void SetAsDefault ()
 		{
@@ -51,9 +50,17 @@ namespace MonoDevelop.OpenWith
 
 		void SetAsDefault (bool isDefault)
 		{
-			var openWithDisplayBinding = DisplayBinding as OpenWithDesktopApplicationDisplayBinding;
-			if (openWithDisplayBinding != null) {
-				openWithDisplayBinding.CanUseAsDefault = isDefault;
+			if (DisplayBinding != null) {
+				DisplayBinding.CanUseAsDefault = isDefault;
+			}
+		}
+
+		public bool IsDefault {
+			get {
+				if (DisplayBinding != null)
+					return DisplayBinding.CanUseAsDefault;
+
+				return false;
 			}
 		}
 	}

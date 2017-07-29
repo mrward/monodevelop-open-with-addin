@@ -24,8 +24,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using System;
 using MonoDevelop.Components.Commands;
-using MonoDevelop.Ide.Gui;
+using MonoDevelop.Core;
 
 namespace MonoDevelop.OpenWith
 {
@@ -33,8 +34,11 @@ namespace MonoDevelop.OpenWith
 	{
 		protected override void Run ()
 		{
-			//DisplayBindingService.RegisterRuntimeDisplayBinding (CustomizeOpenWithServices.ViewDisplayBinding);
-			//DisplayBindingService.RegisterRuntimeDisplayBinding (CustomizeOpenWithServices.ExternalDisplayBinding);
+			try {
+				OpenWithServices.Mappings.Load ();
+			} catch (Exception ex) {
+				LoggingService.LogError ("Unable to load saved Open With settings.", ex);
+			}
 		}
 	}
 }

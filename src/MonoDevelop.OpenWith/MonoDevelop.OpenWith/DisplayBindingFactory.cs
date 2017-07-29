@@ -47,7 +47,7 @@ namespace MonoDevelop.OpenWith
 			return null;
 		}
 
-		public static IDisplayBinding CreateDisplayBinding (
+		public static OpenWithDesktopApplicationDisplayBinding CreateDisplayBinding (
 			FilePath fileName,
 			string mimeType,
 			UserDefinedOpenWithFileViewer fileViewer)

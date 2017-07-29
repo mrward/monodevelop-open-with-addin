@@ -54,6 +54,8 @@
     <Compile Include="MonoDevelop.OpenWith\UserDefinedOpenWithFileViewer.cs" />
     <Compile Include="MonoDevelop.OpenWith\DesktopApplicationFactory.cs" />
     <Compile Include="MonoDevelop.OpenWith\ExternalProcessDesktopApplication.cs" />
+    <Compile Include="MonoDevelop.OpenWith\OpenWithSettings.cs" />
+    <Compile Include="MonoDevelop.OpenWith\DisplayBindingMappingKey.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Manifest.addin.xml" />
