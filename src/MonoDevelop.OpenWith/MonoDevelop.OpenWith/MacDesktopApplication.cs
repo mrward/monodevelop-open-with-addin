@@ -25,6 +25,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using System;
+using System.IO;
 using AppKit;
 using MonoDevelop.Ide.Desktop;
 
@@ -42,6 +44,14 @@ namespace MonoDevelop.OpenWith
 			foreach (var file in files) {
 				NSWorkspace.SharedWorkspace.OpenFile (file, Id);
 			}
+		}
+
+		public static bool IsMacApplication (string fileName)
+		{
+			if (string.IsNullOrEmpty (fileName))
+				return false;
+
+			return StringComparer.OrdinalIgnoreCase.Equals (Path.GetExtension (fileName), ".app");
 		}
 	}
 }

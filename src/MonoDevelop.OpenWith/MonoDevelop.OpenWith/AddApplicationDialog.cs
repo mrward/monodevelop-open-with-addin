@@ -77,6 +77,7 @@ namespace MonoDevelop.OpenWith
 
 		void ApplicationTextEntryChanged (object sender, EventArgs e)
 		{
+			argumentsTextEntry.Sensitive = !MacDesktopApplication.IsMacApplication (Application);
 			UpdateButtons ();
 		}
 

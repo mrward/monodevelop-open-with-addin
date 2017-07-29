@@ -38,7 +38,7 @@ namespace MonoDevelop.OpenWith
 			string arguments,
 			string name)
 		{
-			if (StringComparer.OrdinalIgnoreCase.Equals (Path.GetExtension (application), ".app"))
+			if (MacDesktopApplication.IsMacApplication (application))
 				return new MacDesktopApplication (application, name, isDefault: false);
 
 			var command = Runtime.ProcessService.CreateCommand (application);
