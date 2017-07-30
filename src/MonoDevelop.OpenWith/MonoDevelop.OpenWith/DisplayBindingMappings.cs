@@ -24,7 +24,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using MonoDevelop.Core;
@@ -68,13 +67,15 @@ namespace MonoDevelop.OpenWith
 
 			var key = GetKey (fileName, mimeType);
 
-
 			var userDefinedFileViewer = fileViewer as UserDefinedOpenWithFileViewer;
 			if (userDefinedFileViewer != null) {
 				defaultDisplayBindings [key] = userDefinedFileViewer.DisplayBinding;
 				userDefinedFileViewer.SetAsDefault ();
 				return;
 			}
+
+			key.IsApplication = fileViewer.IsApplication;
+			key.IsDisplayBinding = fileViewer.IsDisplayBinding;
 
 			mappings [key] = fileViewer.GetMappingKey ();
 
@@ -218,13 +219,7 @@ namespace MonoDevelop.OpenWith
 				var dummyFileName = new FilePath ("a.txt")
 					.ChangeExtension (keyValuePair.Key.FileExtension);
 
-				var fileViewers = OpenWithFileViewer.GetFileViewers (
-					dummyFileName,
-					keyValuePair.Key.MimeType,
-					null).ToList ();
-
-				var openFileViewer = fileViewers
-					.FirstOrDefault (fileViewer => fileViewer.GetMappingKey () == keyValuePair.Value);
+				OpenWithFileViewer openFileViewer = FindMappedFileViewer (dummyFileName, keyValuePair);
 				if (openFileViewer != null) {
 					SetAsDefault (dummyFileName, keyValuePair.Key.MimeType, openFileViewer);
 				} else {
@@ -235,6 +230,26 @@ namespace MonoDevelop.OpenWith
 						keyValuePair.Key.MimeType);
 				}
 			}
+		}
+
+		OpenWithFileViewer FindMappedFileViewer (
+			FilePath fileName,
+			KeyValuePair<DisplayBindingMappingKey, string> keyValuePair)
+		{
+			if (keyValuePair.Key.IsDisplayBinding) {
+				var fileViewers = OpenWithFileViewer.GetFileViewers (
+					fileName,
+					keyValuePair.Key.MimeType,
+					null);
+
+				return fileViewers
+					.FirstOrDefault (fileViewer => fileViewer.GetMappingKey () == keyValuePair.Value);
+			}
+
+			// Application default mapping. This cannot be found at this point
+			// until we have the full file name to an existing file. The application
+			// will not be found so it has to be done later on.
+			return new LazyOpenWithFileViewer (keyValuePair.Key, keyValuePair.Value);
 		}
 	}
 }

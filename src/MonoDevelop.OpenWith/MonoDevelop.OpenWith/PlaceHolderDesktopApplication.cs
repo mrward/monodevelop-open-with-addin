@@ -1,5 +1,5 @@
 ﻿//
-// DisplayBindingMappingKey.cs
+// PlaceHolderDesktopApplication.cs
 //
 // Author:
 //       Matt Ward <matt.ward@xamarin.com>
@@ -25,51 +25,20 @@
 // THE SOFTWARE.
 
 using System;
-using MonoDevelop.Core;
+using MonoDevelop.Ide.Desktop;
 
 namespace MonoDevelop.OpenWith
 {
-	class DisplayBindingMappingKey : IEquatable<DisplayBindingMappingKey>
+	class PlaceHolderDesktopApplication : DesktopApplication
 	{
-		public DisplayBindingMappingKey (FilePath fileName, string mimeType)
+		public PlaceHolderDesktopApplication (string applicationId)
+			: base (applicationId, "PlaceHolder", isDefault: false)
 		{
-			FileExtension = fileName.Extension;
-			MimeType = mimeType;
 		}
 
-		public DisplayBindingMappingKey (string fileExtension, string mimeType)
+		public override void Launch (params string[] files)
 		{
-			FileExtension = fileExtension;
-			MimeType = mimeType;
-		}
-
-		public string FileExtension { get; private set; }
-		public string MimeType { get; private set; }
-
-		public bool IsApplication { get; set; }
-		public bool IsDisplayBinding { get; set; }
-
-		string GetKey ()
-		{
-			return $"{FileExtension}-{MimeType}";
-		}
-
-		public override int GetHashCode()
-		{
-			return StringComparer.OrdinalIgnoreCase.GetHashCode (GetKey ());
-		}
-
-		public override bool Equals (object obj)
-		{
-			return Equals (obj as DisplayBindingMappingKey);
-		}
-
-		public bool Equals (DisplayBindingMappingKey other)
-		{
-			if (other != null)
-				return StringComparer.OrdinalIgnoreCase.Equals (other.GetKey (), GetKey ());
-
-			return false;
+			throw new NotImplementedException ();
 		}
 	}
 }

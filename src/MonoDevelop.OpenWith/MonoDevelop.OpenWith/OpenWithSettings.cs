@@ -112,6 +112,8 @@ namespace MonoDevelop.OpenWith
 
 				writer.WriteAttributeString ("extension", keyValuePair.Key.FileExtension);
 				writer.WriteAttributeString ("mimeType", keyValuePair.Key.MimeType);
+				writer.WriteAttributeString ("isApplication", keyValuePair.Key.IsApplication.ToString ());
+				writer.WriteAttributeString ("isDisplayBinding", keyValuePair.Key.IsDisplayBinding.ToString ());
 
 				writer.WriteElementString ("DisplayBinding", keyValuePair.Value);
 
@@ -268,7 +270,18 @@ namespace MonoDevelop.OpenWith
 			string extension = reader.GetAttribute ("extension");
 			string mimeType = reader.GetAttribute ("mimeType");
 
-			return new DisplayBindingMappingKey (extension, mimeType);
+			string isApplicationText = reader.GetAttribute ("isApplication");
+			string isDisplayBindingText = reader.GetAttribute ("isDisplayBinding");
+
+			var key = new DisplayBindingMappingKey (extension, mimeType);
+
+			if (!string.IsNullOrEmpty (isApplicationText))
+				key.IsApplication = bool.Parse (isApplicationText);
+
+			if (!string.IsNullOrEmpty (isDisplayBindingText))
+				key.IsDisplayBinding = bool.Parse (isDisplayBindingText);
+
+			return key;
 		}
 
 		bool CanCreateUserDefinedFileViewer (

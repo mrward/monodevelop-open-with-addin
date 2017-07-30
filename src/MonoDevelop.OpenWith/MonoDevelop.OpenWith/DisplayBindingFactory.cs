@@ -36,6 +36,10 @@ namespace MonoDevelop.OpenWith
 			string mimeType,
 			OpenWithFileViewer fileViewer)
 		{
+			var lazyFileViewer = fileViewer as LazyOpenWithFileViewer;
+			if (lazyFileViewer != null)
+				return CreateDisplayBinding (fileName, mimeType, lazyFileViewer);
+
 			if (fileViewer.IsDisplayBinding)
 				return new OpenWithViewDisplayBinding (fileViewer);
 			else if (fileViewer.IsApplication) {
@@ -57,6 +61,17 @@ namespace MonoDevelop.OpenWith
 				mimeType,
 				fileViewer.GetApplication (),
 				canUseAsDefault: false);
+		}
+
+		public static LazyDisplayBinding CreateDisplayBinding (
+			FilePath fileName,
+			string mimeType,
+			LazyOpenWithFileViewer fileViewer)
+		{
+			return new LazyDisplayBinding (
+				fileName,
+				mimeType,
+				fileViewer);
 		}
 	}
 }

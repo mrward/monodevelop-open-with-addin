@@ -56,6 +56,9 @@
     <Compile Include="MonoDevelop.OpenWith\ExternalProcessDesktopApplication.cs" />
     <Compile Include="MonoDevelop.OpenWith\OpenWithSettings.cs" />
     <Compile Include="MonoDevelop.OpenWith\DisplayBindingMappingKey.cs" />
+    <Compile Include="MonoDevelop.OpenWith\LazyOpenWithFileViewer.cs" />
+    <Compile Include="MonoDevelop.OpenWith\PlaceHolderDesktopApplication.cs" />
+    <Compile Include="MonoDevelop.OpenWith\LazyDisplayBinding.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Manifest.addin.xml" />

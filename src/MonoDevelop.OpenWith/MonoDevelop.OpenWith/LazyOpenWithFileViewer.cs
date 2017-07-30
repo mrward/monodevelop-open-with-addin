@@ -1,5 +1,5 @@
 ﻿//
-// DisplayBindingMappingKey.cs
+// LazyOpenWithFileViewer.cs
 //
 // Author:
 //       Matt Ward <matt.ward@xamarin.com>
@@ -24,52 +24,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System;
-using MonoDevelop.Core;
-
 namespace MonoDevelop.OpenWith
 {
-	class DisplayBindingMappingKey : IEquatable<DisplayBindingMappingKey>
+	class LazyOpenWithFileViewer : OpenWithFileViewer
 	{
-		public DisplayBindingMappingKey (FilePath fileName, string mimeType)
+		DisplayBindingMappingKey mappingKey;
+		PlaceHolderDesktopApplication app;
+
+		public LazyOpenWithFileViewer (
+			DisplayBindingMappingKey mappingKey,
+			string mapping)
+			: this (mappingKey, new PlaceHolderDesktopApplication (mapping))
 		{
-			FileExtension = fileName.Extension;
-			MimeType = mimeType;
 		}
 
-		public DisplayBindingMappingKey (string fileExtension, string mimeType)
+		LazyOpenWithFileViewer (
+			DisplayBindingMappingKey mappingKey,
+			PlaceHolderDesktopApplication app)
+			: base (app)
 		{
-			FileExtension = fileExtension;
-			MimeType = mimeType;
-		}
-
-		public string FileExtension { get; private set; }
-		public string MimeType { get; private set; }
-
-		public bool IsApplication { get; set; }
-		public bool IsDisplayBinding { get; set; }
-
-		string GetKey ()
-		{
-			return $"{FileExtension}-{MimeType}";
-		}
-
-		public override int GetHashCode()
-		{
-			return StringComparer.OrdinalIgnoreCase.GetHashCode (GetKey ());
-		}
-
-		public override bool Equals (object obj)
-		{
-			return Equals (obj as DisplayBindingMappingKey);
-		}
-
-		public bool Equals (DisplayBindingMappingKey other)
-		{
-			if (other != null)
-				return StringComparer.OrdinalIgnoreCase.Equals (other.GetKey (), GetKey ());
-
-			return false;
+			this.mappingKey = mappingKey;
+			this.app = app;
 		}
 	}
 }

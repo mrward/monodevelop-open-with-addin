@@ -113,10 +113,6 @@ namespace MonoDevelop.OpenWith
 			get { return binding != null ? binding.Name : app.DisplayName; }
 		}
 
-		public bool IsExternal {
-			get { return binding == null; }
-		}
-
 		public bool CanUseAsDefault {
 			get {
 				if (binding != null)
