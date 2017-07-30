@@ -45,7 +45,7 @@ application is not a Mac application, for example, it is a C# program, then argu
 can be passed. To pass the filename to the program you can use `{0}` in the
 Arguments text box. This placeholder will be expanded to be the full filename when the program is run.
 
-## Removing a Custom Application
+## Removing a Custom Application
 
 In the Open With dialog to remove a custom application you can select the
 application and click the Remove button. The Remove button is only enabled for
