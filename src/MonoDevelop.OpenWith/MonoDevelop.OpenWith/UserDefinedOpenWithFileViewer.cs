@@ -30,13 +30,23 @@ namespace MonoDevelop.OpenWith
 {
 	class UserDefinedOpenWithFileViewer : OpenWithFileViewer
 	{
+		bool isDefault;
+		OpenWithDesktopApplicationDisplayBinding displayBinding;
+
 		public UserDefinedOpenWithFileViewer (DesktopApplication app)
 			: base (app)
 		{
 		}
 
 		public bool IsNew { get; set; }
-		public OpenWithDesktopApplicationDisplayBinding DisplayBinding { get; set; }
+
+		public OpenWithDesktopApplicationDisplayBinding DisplayBinding {
+			get { return displayBinding; }
+			set {
+				displayBinding = value;
+				SetAsDefault (isDefault);
+			}
+		}
 
 		public void SetAsDefault ()
 		{
@@ -50,6 +60,8 @@ namespace MonoDevelop.OpenWith
 
 		void SetAsDefault (bool isDefault)
 		{
+			this.isDefault = isDefault;
+
 			if (DisplayBinding != null) {
 				DisplayBinding.CanUseAsDefault = isDefault;
 			}
@@ -60,7 +72,7 @@ namespace MonoDevelop.OpenWith
 				if (DisplayBinding != null)
 					return DisplayBinding.CanUseAsDefault;
 
-				return false;
+				return isDefault;
 			}
 		}
 	}
