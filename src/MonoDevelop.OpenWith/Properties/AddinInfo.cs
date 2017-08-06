@@ -28,8 +28,8 @@ using Mono.Addins;
 using Mono.Addins.Description;
 
 [assembly: Addin(
-	"MonoDevelop.OpenWith",
-	Namespace = "MonoDevelop.OpenWith",
+	"OpenWith",
+	Namespace = "MonoDevelop",
 	Version = "0.1"
 )]
 
