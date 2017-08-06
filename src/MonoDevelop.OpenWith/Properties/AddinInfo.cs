@@ -33,7 +33,7 @@ using Mono.Addins.Description;
 	Version = "0.1"
 )]
 
-[assembly: AddinName ("MonoDevelop.OpenWith")]
+[assembly: AddinName ("Open With")]
 [assembly: AddinCategory ("IDE extensions")]
-[assembly: AddinDescription ("MonoDevelop.OpenWith")]
+[assembly: AddinDescription ("Provides a way to change the default editor or application used to open files")]
 [assembly: AddinAuthor ("Matt Ward")]
