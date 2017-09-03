@@ -59,7 +59,7 @@ namespace MonoDevelop.OpenWith
 		public bool CanHandle (FilePath fileName, string mimeType, Project ownerProject)
 		{
 			if (displayBinding == null) {
-				if (IsSupported (fileName, mimeType)) {
+				if (IsSupported (fileName)) {
 					if (findingDisplayBinding)
 						return false;
 
@@ -89,11 +89,8 @@ namespace MonoDevelop.OpenWith
 				CanUseAsDefault);
 		}
 
-		bool IsSupported (FilePath fileName, string mimeType)
+		bool IsSupported (FilePath fileName)
 		{
-			if (StringComparer.OrdinalIgnoreCase.Equals (mimeType, this.mimeType))
-				return true;
-
 			return StringComparer.OrdinalIgnoreCase.Equals (fileName.Extension, fileExtension);
 		}
 

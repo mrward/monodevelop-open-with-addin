@@ -58,9 +58,6 @@ namespace MonoDevelop.OpenWith
 
 		public bool CanHandle (FilePath fileName, string mimeType, Project ownerProject)
 		{
-			if (StringComparer.OrdinalIgnoreCase.Equals (mimeType, this.mimeType))
-				return true;
-
 			return StringComparer.OrdinalIgnoreCase.Equals (fileName.Extension, fileExtension);
 		}
 
