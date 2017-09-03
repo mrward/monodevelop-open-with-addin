@@ -66,6 +66,9 @@ namespace MonoDevelop.OpenWith
 				}
 			}
 
+			if (filePath.IsNullOrEmpty)
+				yield break;
+
 			foreach (var app in DesktopService.GetApplications (filePath))
 				if (viewerIds.Add (app.Id))
 					yield return new OpenWithFileViewer (app);
